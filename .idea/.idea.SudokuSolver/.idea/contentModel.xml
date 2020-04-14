@@ -6,10 +6,11 @@
     <e p="$PROJECT_DIR$" t="IncludeFlat">
       <e p="SudokuSolver" t="IncludeRecursive">
         <e p="Program.cs" t="Include" />
+        <e p="SimpleSudokuSolver.cs" t="Include" />
         <e p="Sudoku.cs" t="Include" />
         <e p="SudokuAccess.cs" t="Include" />
-        <e p="SudokuSolver.cs" t="Include" />
         <e p="SudokuSolver.csproj" t="IncludeRecursive" />
+        <e p="SudokuSolvingLogic.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">

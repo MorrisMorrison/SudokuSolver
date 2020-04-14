@@ -13,7 +13,8 @@ namespace SudokuSolver
             IList<Sudoku> readPuzzles = sudokuAccess.ReadPuzzles(path);
             IList<Sudoku> readSolutions = sudokuAccess.ReadSolutions(path);
             
-            SudokuSolver solver = new SudokuSolver();
+            SudokuSolvingLogic logic = new SudokuSolvingLogic();
+            SimpleSudokuSolver solver = new SimpleSudokuSolver(logic);
 
 
             for (int i = 0; i < readPuzzles.Count; i++)
@@ -23,8 +24,8 @@ namespace SudokuSolver
 
                 bool solved = actualSolution.Equals(possibleSolution);
 
-                Console.WriteLine(possibleSolution);
-                Console.WriteLine(actualSolution);
+                // Console.WriteLine(possibleSolution);
+                // Console.WriteLine(actualSolution);
                 Console.WriteLine("Sudoku "+ i + ": " + (solved ? "SOLVE" : "FAIL"));
             }
             

@@ -11,7 +11,9 @@ namespace SudokuSolver
         public IList<Sudoku> ReadSolutions(string p_path);
     }
     
-    // different implementations for different kinds of input data
+    /// <summary>
+    /// ISudokuAccess implementation for numpy representation of sudoku puzzles.
+    /// </summary>
     public class NumPySudokuAccess:ISudokuAccess
     {
         
@@ -34,7 +36,7 @@ namespace SudokuSolver
                 // Skip first row
                 parser.ReadLine();
 
-                while (parser.LineNumber < 1000)
+                while (parser.LineNumber < 10000)
                 {
                     string[] fields = parser.ReadFields();
                     string puzzle = fields[p_columnIndex];
@@ -45,13 +47,9 @@ namespace SudokuSolver
                     {
                         for (int j = 0; j < _size; j++)
                         {
-                            // row 1 skip 9, also start 9
-                            // row 2, also start 18
+                            int startIndex = i == 0 ? j: i * _size + j;
                             
-                            // find starting index of where to parse from
-                            int index = i == 0 ? j: i * _size + j;
-                            
-                            int number = int.Parse(puzzle[index].ToString());
+                            int number = int.Parse(puzzle[startIndex].ToString());
                             puzzleData[i,j] = number;
                         }
                     }

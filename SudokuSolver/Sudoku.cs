@@ -9,7 +9,7 @@ using System.Text;
 namespace SudokuSolver
 {
     /// <summary>
-    /// Represents one single Sudoku puzzle
+    /// Represents a single Sudoku puzzle.
     /// </summary>
     public class Sudoku
     {
@@ -113,17 +113,7 @@ namespace SudokuSolver
 
             return column;
         }
-
         
-        // 0 = 0
-        // 1 = 0
-        // 2 = 0
-        // 3 = 1
-        // 4 = 1
-        // 5 = 1
-        // 6 = 2
-        // 7 = 2
-        // 8 = 2
         public IList<SudokuCell> GetSquare(int p_rowIndex, int p_columnIndex)
         {
             IList<SudokuCell> square = new List<SudokuCell>();
@@ -147,6 +137,7 @@ namespace SudokuSolver
 
             return square;
         }
+        
         public IList<SudokuCell> GetAll()
         {
             IList<SudokuCell> cells = new List<SudokuCell>();
@@ -214,22 +205,76 @@ namespace SudokuSolver
 
             return builder.ToString();
         }
-
+        
     }
 
+    /// <summary>
+    /// Represents a single cell in a sudoku puzzle.
+    /// </summary>
     public class SudokuCell
     {
         public int Row { get; set; }
         public int Column { get; set; }
         public int Value { get; set; }
+        
+        // work with array internally to ensure the values 1-9
+        private int[] _candidates { get; set; } = new int[9];
+
+        public IList<int> Candidates
+        {
+            get { return _candidates.Select(p_candidate => p_candidate +1).ToList(); }
+        }
+
+        public void AddCandidate(int p_candidate)
+        {
+                _candidates[p_candidate-1] = 1;
+        }
+
+        public void AddCandidates(IList<int> p_candidates)
+        {
+            foreach (int candidate in p_candidates)
+            {
+                _candidates[candidate] = 1;
+            }
+        }
+        
+        public void UpdateCandidates(IList<int> p_candidates)
+        {
+            foreach (int candidate in _candidates)
+            {
+                if (p_candidates.Contains(candidate))
+                {
+                    _candidates[candidate] = 1;
+                }
+                else
+                {
+                    _candidates[candidate] = 0;
+                }
+            }
+        }
+
+        public void DeleteCandidate(int p_candidate)
+        {
+                _candidates[p_candidate-1] = 0;
+        }
+
+        public void DeleteCandidates(IList<int> p_candidates)
+        {
+            foreach (int candidate in p_candidates)
+            {
+                _candidates[candidate] = 0;
+            }
+        }
+        
+        public bool IsSolved
+        {
+            get { return Value != 0; }
+        }
 
         public bool Equals(SudokuCell p_cell)
         {
             return p_cell.Row == Row && p_cell.Column == Column && p_cell.Value == Value;
         }
         
-        
     }
-    
-    
 }
