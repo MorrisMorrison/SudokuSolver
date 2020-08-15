@@ -22,7 +22,7 @@ IList<ISolvingStrategy> strategies = new List<ISolvingStrategy>(){
 SudokuSolver solver = new SudokuSolver(strategies);
 Sudoku result = solver.Solve(sudokuPuzzle);
 ``` 
-###CustomStrategy
+### CustomStrategy
 ```csharp
 public class CustomStrategy:ISolvingStrategy{
     public Sudoku Solve(Sudoku p_sudoku){
