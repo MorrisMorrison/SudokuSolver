@@ -5,4 +5,14 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Reference Include="SimpleConfigAccess, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\SimpleConfigAccess\SimpleConfigAccess\bin\Debug\netcoreapp3.1\SimpleConfigAccess.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    </ItemGroup>
+
 </Project>
