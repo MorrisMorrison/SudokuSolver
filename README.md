@@ -1,4 +1,4 @@
-#SudokuSolver
+# SudokuSolver
 This is a simple console application and/or library that allows solving simple sudoku puzzles.
 
 The internal core library could also be extracted, to provide an easy to use option to read and manipulate puzzles.
