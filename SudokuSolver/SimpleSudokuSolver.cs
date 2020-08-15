@@ -39,43 +39,74 @@ namespace SudokuSolver
         public Sudoku Solve(Sudoku p_sudoku, Func<Sudoku, SudokuCell, int> p_additionalSolvingLogic = null)
         {
             bool isSolved = false;
-
+            bool executeHiddenSingle = false;
+            int lastUnsolvedCount = 0;
+            
             while (!isSolved)
             {
-                // get all coordinates of unsolved cells
+                
+                // if unsolved count hasnt changed switch to next strategiy
                 IList<SudokuCell> unsolved = p_sudoku.GetUnsolved();
+                if (lastUnsolvedCount != 0 && unsolved.Count == lastUnsolvedCount)
+                {
+                    executeHiddenSingle = true;
+                }
+                
+                
+                lastUnsolvedCount = unsolved.Count;
+                
                 if (unsolved.Count == 0)
                 {
                     isSolved = true;
                 }
 
+
                 foreach (SudokuCell sudokuCell in unsolved)
                 {
-                    int nakedSingle = SolvingLogic.FindNakedSingle(p_sudoku, sudokuCell);
-                    if (nakedSingle != 0)
+                    if (!executeHiddenSingle)
                     {
-                        sudokuCell.Value = nakedSingle;
-                        p_sudoku.Update(sudokuCell);
-                        continue;
+                        int nakedSingle = SolvingLogic.FindNakedSingle(p_sudoku, sudokuCell);
+                        if (nakedSingle != 0)
+                        {
+                            sudokuCell.Value = nakedSingle;
+                            p_sudoku.Update(sudokuCell);
+                            continue;
+                        }    
                     }
 
-                    int hiddenSingle = SolvingLogic.FindHiddenSingle(p_sudoku, sudokuCell);
-                    if (hiddenSingle != 0)
+                    if (executeHiddenSingle)
                     {
-                        sudokuCell.Value = hiddenSingle;
-                        p_sudoku.Update(sudokuCell);
-                        continue;
-                    }
-
-                    if (p_additionalSolvingLogic != null)
-                    {
-                        int value = p_additionalSolvingLogic.Invoke(p_sudoku, sudokuCell);
-                        sudokuCell.Value = value;
-                        p_sudoku.Update(sudokuCell);
-                        continue;
+                        int hiddenSingle = SolvingLogic.FindHiddenSingle(p_sudoku, sudokuCell);
+                        if (hiddenSingle != 0)
+                        {
+                            sudokuCell.Value = hiddenSingle;
+                            p_sudoku.Update(sudokuCell);
+                            p_sudoku = SolvingLogic.UpdateCandidates(p_sudoku);
+                            continue;
+                        }
                     }
                     
+
+                    // int hiddenSingle = SolvingLogic.FindHiddenSingle(p_sudoku, sudokuCell);
+                    // if (hiddenSingle != 0)
+                    // {
+                    //     sudokuCell.Value = hiddenSingle;
+                    //     p_sudoku.Update(sudokuCell);
+                    //     continue;
+                    // }
+                    //
+                    // if (p_additionalSolvingLogic != null)
+                    // {
+                    //     int value = p_additionalSolvingLogic.Invoke(p_sudoku, sudokuCell);
+                    //     sudokuCell.Value = value;
+                    //     p_sudoku.Update(sudokuCell);
+                    //     continue;
+                    // }
                 }
+                
+                if(executeHiddenSingle) p_sudoku = SolvingLogic.UpdateCandidates(p_sudoku);
+
+
             }
 
 

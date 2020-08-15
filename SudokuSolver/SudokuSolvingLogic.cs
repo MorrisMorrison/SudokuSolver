@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,12 +23,12 @@ namespace SudokuSolver
             IList<SudokuCell> column = p_sudoku.GetColumn(p_sudokuCell.Column);
             IList<SudokuCell> square = p_sudoku.GetSquare(p_sudokuCell.Row, p_sudokuCell.Column);
 
-            int missingValue = FindNakedSingleInternal(row, column, square);
+            int missingValue = FindNakedSingleInternal(p_sudokuCell,row, column, square);
 
             return missingValue;
         }
 
-        private int FindNakedSingleInternal(IList<SudokuCell> p_row, IList<SudokuCell> p_column,
+        private int FindNakedSingleInternal(SudokuCell p_sudokuCell,IList<SudokuCell> p_row, IList<SudokuCell> p_column,
             IList<SudokuCell> p_square)
         {
             IList<int> candidates = new List<int>();
@@ -43,63 +44,75 @@ namespace SudokuSolver
                 }
             }
 
-            if (candidates.Count == 1)
-            {
+            if(candidates.Count == 1){
                 return candidates.FirstOrDefault();
             }
 
+            p_sudokuCell.AddCandidates(candidates);
             return 0;
         }
 
         public int FindHiddenSingle(Sudoku p_sudoku, SudokuCell p_sudokuCell)
         {
             int missingValue = 0;
-            IList<int> validRowAndColNums = CalculateValidRowAndColNums(p_sudoku.Size);
+            // IList<int> validRowAndColNums = CalculateValidRowAndColNums(p_sudoku.Size);
+            //
+            // bool isPossibleRow = (validRowAndColNums.Contains(p_sudokuCell.Row)) &&
+            //                      (validRowAndColNums.Contains(p_sudokuCell.Column));
+            //
+            // if (isPossibleRow)
+            // {
+            //     // TODO Refactor
+            //     bool columnIsPossible = p_sudoku[p_sudokuCell.Row - 1, p_sudokuCell.Column] != 0 &&
+            //                          p_sudoku[p_sudokuCell.Row + 1, p_sudokuCell.Column] != 0;
+            //     bool rowIsPossible = p_sudoku[p_sudokuCell.Row, p_sudokuCell.Column - 1] != 0 &&
+            //                       p_sudoku[p_sudokuCell.Row, p_sudokuCell.Column + 1] != 0;
+            //
+            //     IList<SudokuCell> row = p_sudoku.GetRow(p_sudokuCell.Row);
+            //     IList<SudokuCell> column = p_sudoku.GetColumn(p_sudokuCell.Column);
+            //     IList<SudokuCell> square = p_sudoku.GetSquare(p_sudokuCell.Row, p_sudokuCell.Column);
+            //
+            //     if (columnIsPossible)
+            //     {
+            //         IList<SudokuCell> previousColumn = p_sudokuCell.Column == 0
+            //             ? new List<SudokuCell>()
+            //             : p_sudoku.GetColumn(p_sudokuCell.Column - 1);
+            //         IList<SudokuCell> followingColumn = p_sudokuCell.Column == p_sudoku.Size - 1
+            //             ? new List<SudokuCell>()
+            //             : p_sudoku.GetColumn(p_sudokuCell.Column + 1);
+            //
+            //         missingValue = FindHiddenSingleInternal(square, previousColumn, column, followingColumn, row);
+            //     }
+            //
+            //     if (rowIsPossible)
+            //     {
+            //         if (missingValue == 0)
+            //         {
+            //             IList<SudokuCell> previousRow = p_sudokuCell.Row == 0
+            //                 ? new List<SudokuCell>()
+            //                 : p_sudoku.GetRow(p_sudokuCell.Row - 1);
+            //             IList<SudokuCell> followingRow = p_sudokuCell.Row == p_sudoku.Size - 1
+            //                 ? new List<SudokuCell>()
+            //                 : p_sudoku.GetRow(p_sudokuCell.Row + 1);
+            //
+            //             missingValue = FindHiddenSingleInternal(square, previousRow, row, followingRow, column);
+            //         }
+            //     }
+            // }
             
-            bool isPossibleRow = (validRowAndColNums.Contains(p_sudokuCell.Row)) &&
-                                 (validRowAndColNums.Contains(p_sudokuCell.Column));
+            IList<SudokuCell> row = p_sudoku.GetRow(p_sudokuCell.Row);
+            IList<SudokuCell> column = p_sudoku.GetColumn(p_sudokuCell.Column);
+            IList<SudokuCell> square = p_sudoku.GetSquare(p_sudokuCell.Row, p_sudokuCell.Column);
 
-            if (isPossibleRow)
-            {
-                // TODO Refactor
-                bool columnIsPossible = p_sudoku[p_sudokuCell.Row - 1, p_sudokuCell.Column] != 0 &&
-                                     p_sudoku[p_sudokuCell.Row + 1, p_sudokuCell.Column] != 0;
-                bool rowIsPossible = p_sudoku[p_sudokuCell.Row, p_sudokuCell.Column - 1] != 0 &&
-                                  p_sudoku[p_sudokuCell.Row, p_sudokuCell.Column + 1] != 0;
+            int uniqueCandidateValueRow = Utils.GetUniqueCandidateValue(row);
+            if (uniqueCandidateValueRow != 0) return uniqueCandidateValueRow;
+            
+            int uniqueCandidateValueColumn = Utils.GetUniqueCandidateValue(column);
+            if (uniqueCandidateValueColumn != 0) return uniqueCandidateValueColumn;
 
-                IList<SudokuCell> row = p_sudoku.GetRow(p_sudokuCell.Row);
-                IList<SudokuCell> column = p_sudoku.GetColumn(p_sudokuCell.Column);
-                IList<SudokuCell> square = p_sudoku.GetSquare(p_sudokuCell.Row, p_sudokuCell.Column);
-
-                if (columnIsPossible)
-                {
-                    IList<SudokuCell> previousColumn = p_sudokuCell.Column == 0
-                        ? new List<SudokuCell>()
-                        : p_sudoku.GetColumn(p_sudokuCell.Column - 1);
-                    IList<SudokuCell> followingColumn = p_sudokuCell.Column == p_sudoku.Size - 1
-                        ? new List<SudokuCell>()
-                        : p_sudoku.GetColumn(p_sudokuCell.Column + 1);
-
-                    missingValue = FindHiddenSingleInternal(square, previousColumn, column, followingColumn, row);
-                }
-
-                if (rowIsPossible)
-                {
-                    if (missingValue == 0)
-                    {
-                        IList<SudokuCell> previousRow = p_sudokuCell.Row == 0
-                            ? new List<SudokuCell>()
-                            : p_sudoku.GetRow(p_sudokuCell.Row - 1);
-                        IList<SudokuCell> followingRow = p_sudokuCell.Row == p_sudoku.Size - 1
-                            ? new List<SudokuCell>()
-                            : p_sudoku.GetRow(p_sudokuCell.Row + 1);
-
-                        missingValue = FindHiddenSingleInternal(square, previousRow, row, followingRow, column);
-                    }
-                }
-            }
-
-
+            int uniqueCandidateValueSquare = Utils.GetUniqueCandidateValue(square);
+            if (uniqueCandidateValueSquare != 0) return uniqueCandidateValueSquare;
+            
             return missingValue;
         }
 
@@ -152,6 +165,11 @@ namespace SudokuSolver
 
         public Sudoku UpdateCandidates(Sudoku p_sudoku)
         {
+            foreach (SudokuCell sudokuCell in p_sudoku.GetAll())
+            {
+                if(sudokuCell.Candidates.Contains(sudokuCell.Value)) sudokuCell.DeleteCandidate(sudokuCell.Value);
+            }
+            
             // Iterate through all cells
             foreach (SudokuCell sudokuCell in p_sudoku.GetAll())
             {

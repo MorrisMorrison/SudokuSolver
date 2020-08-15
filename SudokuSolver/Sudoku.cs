@@ -217,13 +217,14 @@ namespace SudokuSolver
         public int Column { get; set; }
         public int Value { get; set; }
         
-        // work with array internally to ensure the values 1-9
         private int[] _candidates { get; set; } = new int[9];
 
         public IList<int> Candidates
         {
-            get { return _candidates.Select(p_candidate => p_candidate +1).ToList(); }
+            get { return _candidates.Where(p_value => p_value != 0).ToList(); }
+            private set{Candidates=value;}
         }
+        
 
         public void AddCandidate(int p_candidate)
         {
@@ -234,22 +235,15 @@ namespace SudokuSolver
         {
             foreach (int candidate in p_candidates)
             {
-                _candidates[candidate] = 1;
+                _candidates[candidate-1] = 1;
             }
         }
         
         public void UpdateCandidates(IList<int> p_candidates)
         {
-            foreach (int candidate in _candidates)
-            {
-                if (p_candidates.Contains(candidate))
-                {
-                    _candidates[candidate] = 1;
-                }
-                else
-                {
-                    _candidates[candidate] = 0;
-                }
+            for (int i= 0; i < 9; i++){
+                if (p_candidates.Contains(i+1)) _candidates[i] =1;
+                else{ _candidates[i] = 0;}
             }
         }
 
@@ -262,7 +256,7 @@ namespace SudokuSolver
         {
             foreach (int candidate in p_candidates)
             {
-                _candidates[candidate] = 0;
+                _candidates[candidate-1] = 0;
             }
         }
         
